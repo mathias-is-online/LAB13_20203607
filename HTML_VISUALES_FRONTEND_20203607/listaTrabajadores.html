@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="#" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" >
+    <title>Bicicentro</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+
+
+    <!-- Enlace al archivo CSS de Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Estilo personalizado -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .jumbotron {
+            text-align: center;
+            padding: 20px 0;
+        }
+        #bicicleta-img {
+            max-width: 100%;
+            height: auto;
+        }
+        #bicicentro-text {
+            color: #007bff; /* Color azul */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Jumbotron con la imagen de la bicicleta -->
+<div class="jumbotron">
+    <img src="logo.jpeg" alt="Bicicleta" id="bicicleta-img">
+    <h1 class="display-4" id="bicicentro-text">BICICENTRO</h1>
+    <div class="col-md-6">
+        <!-- Botón de Trabajadores -->
+        <a href="menu.html" class="btn btn-primary btn-lg btn-block">Regresar</a>
+    </div>
+</div>
+
+
+<div class="container">
+<h1 class="display-4" id="bicicentro-text">Lista trabajadores</h1>
+
+
+</div>
+
+<div id="detalles-sede">
+    <h2>Detalles del trabajador</h2>
+    <p><strong>DNI:</strong> <span id="detalle-dni"></span></p>
+    <p><strong>Nombre:</strong> <span id="detalle-nombre"></span></p>
+    <p><strong>Apellidos:</strong> <span id="detalle-apellido"></span></p>
+    <p><strong>Correo:</strong> <span id="detalle-correo"></span></p>
+    <p><strong>Sede: Sede </strong> <span id="detalle-sede"></span></p>
+
+</div>
+
+
+<div class="container mx-auto" style="width: 800px;">
+    <h1 class="mb-3">Lista de Trabajadores</h1>
+     <hr />
+    <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+                <th>Nombres</th>
+                <th>Correo</th>
+                <th>Acciones</th> <!-- Nueva columna para el botón Detalles -->
+
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+
+
+      
+</div>
+
+
+
+
+
+
+
+
+
+
+<!-- Enlaces a los scripts de Bootstrap y jQuery (necesarios para el funcionamiento de Bootstrap) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+            $.ajax({
+                method: "GET",
+                dataType: "json",
+                url: "http://localhost:3000/trabajadores"
+            }).done(function (data) {
+                var contentHtml = "";
+                $.each(data, function (i, trabajador) {
+                    contentHtml += "<tr>";
+                    contentHtml += "<td>" + (i + 1) + "</td>";
+                    contentHtml += "<td>" + trabajador.nombres + "</td>";
+                    contentHtml += "<td>" + trabajador.correo + "</td>";
+                    contentHtml += "<td><button class='btn btn-primary' onclick='mostrarDetalles(" + trabajador.dni + ")'>Ver Detalles</button></td>";
+
+                    contentHtml += "</tr>";
+                });
+                $("table tbody").html(contentHtml);
+            }).fail(function (err) {
+                console.log(err);
+                alert("Error al obtener la lista de trabajadores");
+            }); 
+    });
+
+
+
+    function mostrarDetalles(id) {
+        // Realizar una nueva solicitud AJAX para obtener los detalles de la sede
+        $.ajax({
+            method: "GET",
+            dataType: "json",
+            url: "http://localhost:3000/trabajadores/" + id
+        }).done(function (detalles) {
+            // Actualizar los elementos HTML con los detalles de la sede
+            $("#detalle-nombre").text(detalles[0].nombres);
+            $("#detalle-apellido").text(detalles[0].apellidos);
+            $("#detalle-correo").text(detalles[0].correo);
+            $("#detalle-dni").text(detalles[0].dni);
+            $("#detalle-sede").text(detalles[0].idsede);
+
+
+            // Mostrar la sección de detalles
+            $("#detalles-sede").show();
+        }).fail(function (err) {
+            console.log(err);
+            alert("Error al obtener los detalles de la sede");
+        });
+    }
+
+</script>
+
+</body>
+</html>

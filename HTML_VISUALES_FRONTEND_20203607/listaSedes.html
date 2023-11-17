@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="#" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <title>Bicicentro</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Enlace al archivo CSS de Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Estilo personalizado -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .jumbotron {
+            text-align: center;
+            padding: 20px 0;
+        }
+        #bicicleta-img {
+            max-width: 100%;
+            height: auto;
+        }
+        #bicicentro-text {
+            color: #007bff; /* Color azul */
+        }
+        #detalles-sede {
+            display: none; /* Ocultar detalles al inicio */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Jumbotron con la imagen de la bicicleta -->
+<div class="jumbotron">
+    <img src="logo.jpeg" alt="Bicicleta" id="bicicleta-img">
+    <h1 class="display-4" id="bicicentro-text">BICICENTRO</h1>
+    <div class="col-md-6">
+        <!-- Botón de Trabajadores -->
+        <a href="menu.html" class="btn btn-primary btn-lg btn-block">Regresar</a>
+    </div>
+</div>
+
+<div class="container">
+    <h1 class="display-4" id="bicicentro-text">Lista sedes</h1>
+</div>
+
+<div class="container mx-auto" style="width: 800px;">
+    <h1 class="mb-3">Lista de Sedes</h1>
+    <hr />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombres</th>
+                <th>Dirección</th>
+                <th>Acciones</th> <!-- Nueva columna para el botón Detalles -->
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <!-- Sección para mostrar detalles de la sede -->
+    <div id="detalles-sede">
+        <h2>Detalles de la Sede</h2>
+        <p><strong>ID:</strong> <span id="detalle-id"></span></p>
+        <p><strong>Nombre:</strong> <span id="detalle-nombre"></span></p>
+        <p><strong>Dirección:</strong> <span id="detalle-direccion"></span></p>
+    </div>
+</div>
+
+<!-- Enlaces a los scripts de Bootstrap y jQuery (necesarios para el funcionamiento de Bootstrap) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            method: "GET",
+            dataType: "json",
+            url: "http://localhost:3000/sedes"
+        }).done(function (data) {
+            var contentHtml = "";
+            $.each(data, function (i, sede) {
+                contentHtml += "<tr>";
+                contentHtml += "<td>" + (i + 1) + "</td>";
+                contentHtml += "<td>" + sede.nombreSede + "</td>";
+                contentHtml += "<td>" + sede.direccion + "</td>";
+                contentHtml += "<td><button class='btn btn-primary' onclick='mostrarDetalles(" + sede.idsede + ")'>Ver Detalles</button></td>";
+                contentHtml += "</tr>";
+            });
+            $("table tbody").html(contentHtml);
+        }).fail(function (err) {
+            console.log(err);
+            alert("Error al obtener la lista de sedes");
+        }); 
+    });
+
+    // Función para mostrar detalles de la sede
+    function mostrarDetalles(id) {
+        // Realizar una nueva solicitud AJAX para obtener los detalles de la sede
+        $.ajax({
+            method: "GET",
+            dataType: "json",
+            url: "http://localhost:3000/sedes/" + id
+        }).done(function (detalles) {
+            // Actualizar los elementos HTML con los detalles de la sede
+            $("#detalle-id").text(detalles[0].idsede);
+            $("#detalle-nombre").text(detalles[0].nombreSede);
+            $("#detalle-direccion").text(detalles[0].direccion);
+
+            // Mostrar la sección de detalles
+            $("#detalles-sede").show();
+        }).fail(function (err) {
+            console.log(err);
+            alert("Error al obtener los detalles de la sede");
+        });
+    }
+</script>
+</body>
+</html>
